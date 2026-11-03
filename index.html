@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>樂器分類大挑戰｜國樂與西洋樂器</title>
+    <title>樂器分類大挑戰｜國樂與西洋樂器・教室大字版</title>
     <style>
         /* --- 1. 基礎設定 --- */
         @import url('https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
@@ -612,12 +612,13 @@ header h1{font-family:var(--title-font);color:#655347;text-shadow:none}
 .learn-links a:hover,.learn-tab:hover{filter:brightness(.96)}
 .learn-note{line-height:1.9}
 #learn-grid{padding-bottom:6px}
-.instrument{width:112px;height:67px;border:2px solid #c5a88c;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:6px 8px}
-.instrument span{font-size:clamp(1.02rem,1.7vw,1.26rem);line-height:1.35;font-weight:800;color:#584c3d;text-align:center;white-space:nowrap}
+/* 教室大字版：只放大「掉落中的樂器名稱」，不改題庫、速度與計分 */
+.instrument{width:clamp(184px,17vw,232px);height:94px;border:2px solid #c5a88c;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:10px 14px}
+.instrument span{font-size:clamp(1.7rem,2.1vw,2.05rem);line-height:1.18;font-weight:900;color:#584c3d;text-align:center;white-space:normal;overflow-wrap:anywhere;letter-spacing:.015em}
 #controls .action-btn{width:100%}
 @media (max-width:640px){
- .instrument{width:95px;height:60px}
- .instrument span{font-size:1rem}
+ .instrument{width:min(47vw,184px);height:82px;padding:8px 10px}
+ .instrument span{font-size:clamp(1.4rem,4.3vw,1.7rem);line-height:1.2}
  .learn-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .learn-card{min-height:195px}
  .learn-links a{font-size:.78rem}
@@ -1269,25 +1270,25 @@ document.addEventListener('DOMContentLoaded',()=>{document.getElementById('cours
             const type = types[Math.floor(Math.random() * types.length)];
             const name = activeInstrumentsData[type][Math.floor(Math.random() * activeInstrumentsData[type].length)];
             
-            const areaWidth = document.getElementById('game-area').offsetWidth;
-            const startX = Math.random() * Math.max(0, areaWidth - 122);
-
+            const gameArea = document.getElementById('game-area');
             const el = document.createElement('div');
             el.className = 'instrument';
             el.dataset.type = type;
             el.dataset.name = name;
-            el.style.left = startX + 'px';
-            el.style.top = '-92px';
             const label=document.createElement('span');
             label.textContent=name;
             el.appendChild(label);
-
+            // 先把卡片放進畫面量尺寸，再決定起點；放大卡片也不會超出右邊。
+            gameArea.appendChild(el);
+            const startX = Math.random() * Math.max(0, gameArea.clientWidth - el.offsetWidth - 8);
+            const initialY = -el.offsetHeight - 8;
+            el.style.left = startX + 'px';
+            el.style.top = initialY + 'px';
             setupDrag(el);
-            document.getElementById('game-area').appendChild(el);
 
             activeInstruments.push({
                 el: el,
-                y: -92,
+                y: initialY,
                 x: startX,
                 speed: (speedSettings[currentSpeed].dropSpeed + Math.random()*0.5) * Math.max(0.55, Math.min(1, document.getElementById('game-area').offsetHeight / 430)),
                 isDragging: false,
